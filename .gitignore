@@ -1,8 +1,5 @@
 
 *.bin
 *.lock
-*.xml
-gradlew
-*.bat
 /.idea/*
 *.class
