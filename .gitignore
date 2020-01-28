@@ -1,9 +1,7 @@
 
 *.bin
 *.lock
-*.properties
 *.xml
-*.jar
 gradlew
 *.bat
 /.idea/*
