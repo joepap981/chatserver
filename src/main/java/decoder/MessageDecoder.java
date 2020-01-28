@@ -1,6 +1,9 @@
+package decoder;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
+import model.Message;
 
 import java.nio.charset.Charset;
 import java.util.List;

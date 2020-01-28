@@ -1,7 +1,7 @@
 package client;
 
-import chat.MessageDecoder;
-import chat.MessageEncoder;
+import decoder.MessageDecoder;
+import encoder.MessageEncoder;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

@@ -1,6 +1,5 @@
 package server;
 
-import chat.Message;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
@@ -9,6 +8,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import model.Message;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,32 +23,42 @@ public class ChatServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Message message = (Message) msg;
         Channel incoming = ctx.channel();
-        Channel receiverChannel = channels.find(
-                channelMap.get(message.getReceiverId())
-        );
+        ChannelMatcher matcher = null;
+        Channel receiverChannel;
 
-        String text = "[User " + message.getReceiverId() + "] : " + message.getText();
+        String text = "[User " + message.getSenderId() + "] : " + message.getText();
         message.setText(text);
         message.setLength(text.length());
 
-        ChannelMatcher matcher = (channel -> channel == receiverChannel);
+        if (message.getReceiverId() == 0) {
+            matcher = (channel -> channel != incoming);
+        } else {
+            receiverChannel = channels.find(
+                    channelMap.get(message.getReceiverId())
+            );
+            matcher = (channel -> channel == receiverChannel);
+        }
+
         channels.writeAndFlush(message, matcher);
     }
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-
+        Message message;
         int newId = createSessionAndGetId(ctx.channel().id());
-
         System.out.println(ctx.channel().remoteAddress() + " (User " + newId + ") has joined");
-        String text = "[SERVER] - User " + newId + " has joined";
-        int textLen = text.length();
 
-        Message message = new Message(
-                0, newId, textLen, text
+        String joinerText = "[SERVER] - Logged in as User " + newId;
+        message = new Message(
+                0, newId, joinerText.length(), joinerText);
+        ctx.channel().writeAndFlush(message);
+
+        String broadcastText = "[SERVER] - User " + newId + " has joined";
+        message = new Message(
+                -1, newId, broadcastText.length(), broadcastText
         );
-
         channels.writeAndFlush(message);
+
         channels.add(ctx.channel());
 
 
@@ -67,7 +77,7 @@ public class ChatServerHandler extends ChannelInboundHandlerAdapter {
         message.setText(text);
         message.setLength(text.length());
 
-        //TODO map에서 remove
+        //TODO delete from map
 
         channels.remove(ctx.channel());
         channels.writeAndFlush(message);

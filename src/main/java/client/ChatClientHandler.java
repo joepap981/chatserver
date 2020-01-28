@@ -1,8 +1,8 @@
 package client;
 
-import chat.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import model.Message;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

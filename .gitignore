@@ -4,7 +4,7 @@
 *.properties
 *.xml
 *.jar
-*.gradle
 gradlew
 *.bat
 /.idea/*
+*.class
