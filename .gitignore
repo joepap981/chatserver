@@ -1,0 +1,10 @@
+
+*.bin
+*.lock
+*.properties
+*.xml
+*.jar
+*.gradle
+gradlew
+*.bat
+/.idea/*
